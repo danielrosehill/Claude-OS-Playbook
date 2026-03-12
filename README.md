@@ -1,3 +1,5 @@
+[![Claude Code Index](https://img.shields.io/badge/Claude%20Code-Repos%20Index-blue?style=flat-square&logo=github)](https://github.com/danielrosehill/Claude-Code-Repos-Index)
+
 # Claude OS Playbook
 
 A GitHub template for provisioning development environments using Claude Code slash commands and subagents instead of Ansible.
@@ -70,3 +72,7 @@ Profiles are YAML files in `profiles/`. See `profiles/example.yaml` for the full
 ## License
 
 MIT
+
+---
+
+For more Claude Code projects, visit my [Claude Code Repos Index](https://github.com/danielrosehill/Claude-Code-Repos-Index).
