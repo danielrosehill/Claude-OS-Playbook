@@ -1,0 +1,44 @@
+# Minimal profile: bare essentials for a Claude Code development environment
+# Good starting point for customization.
+
+name: minimal
+os: ubuntu
+description: Minimal dev environment with Python, Node, Git, and Claude Code
+
+system_packages:
+  apt:
+    - git
+    - curl
+    - wget
+    - jq
+    - build-essential
+    - ca-certificates
+
+languages:
+  - name: python
+    version: latest
+    method: uv
+
+  - name: nodejs
+    version: lts
+    method: nvm
+
+cli_tools:
+  npm:
+    - "@anthropic-ai/claude-code"
+
+shell:
+  env_vars:
+    - name: PATH
+      value: "$PATH:$HOME/.local/bin"
+
+claude:
+  settings:
+    permissions:
+      allow:
+        - Bash
+        - Read
+        - Write
+        - Edit
+        - Glob
+        - Grep

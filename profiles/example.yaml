@@ -1,0 +1,244 @@
+# Example profile: Daniel's Ubuntu workstation
+# This profile is based on the author's environment and serves as a reference.
+# Copy this file, rename it, and customize it for your own setup.
+
+name: daniel-workstation
+os: ubuntu
+description: Full-stack dev workstation with AI/ML tools, OSINT, media production
+
+system_packages:
+  apt:
+    - git
+    - curl
+    - wget
+    - jq
+    - vim
+    - neovim
+    - build-essential
+    - ca-certificates
+    - gnupg
+    - lsb-release
+    - apt-transport-https
+    - software-properties-common
+    - libvirt-daemon-system
+    - virt-manager
+    - imagemagick
+    - 7zip
+    - bpftrace
+    - dmidecode
+
+  snap:
+    - name: code
+      classic: true
+    - name: chromium
+    - name: firefox
+    - name: slack
+      classic: true
+    - name: zellij
+      classic: true
+    - name: cheat
+    - name: auto-cpufreq
+
+  flatpak:
+    - app_id: com.discordapp.Discord
+      name: Discord
+    - app_id: com.getpostman.Postman
+      name: Postman
+    - app_id: io.github.jliljebl.Flowblade
+      name: Flowblade
+    - app_id: org.kde.kdenlive
+      name: Kdenlive
+    - app_id: com.jgraph.drawio.desktop
+      name: Draw.io
+    - app_id: org.gnome.FileShredder
+      name: File Shredder
+    - app_id: com.github.ADBeveridge.Raider
+      name: Raider
+    - app_id: org.nickvision.money
+      name: Denaro
+    - app_id: io.github.nickvision.xnconvert
+      name: XnConvert
+
+languages:
+  - name: python
+    version: "3.13"
+    method: uv
+    notes: "uv manages Python versions and venvs"
+
+  - name: nodejs
+    version: "22"
+    method: nvm
+    notes: "LTS version via nvm"
+
+  - name: go
+    version: latest
+    method: binary
+    notes: "Download from go.dev, extract to /usr/local"
+
+  - name: rust
+    version: latest
+    method: rustup
+
+  - name: java
+    version: "21"
+    method: sdkman
+
+containers:
+  - name: docker
+    method: apt-repo
+    extras:
+      - docker-compose-plugin
+      - docker-buildx-plugin
+    post_install:
+      - "sudo usermod -aG docker $USER"
+
+  - name: docker-desktop
+    method: manual
+    url: https://www.docker.com/products/docker-desktop/
+    notes: "Download .deb from Docker website"
+
+cli_tools:
+  uv:
+    - b2
+    - edge-tts
+    - git-filter-repo
+    - huggingface-hub
+    - mail-parser
+    - rembg
+    - weasyprint
+
+  npm:
+    - "@formspree/cli"
+    - "@googleworkspace/cli"
+    - eas-cli
+
+  pip:
+    - flask
+    - fastapi
+    - django
+    - requests
+    - httpie
+    - beautifulsoup4
+    - pillow
+    - ansible
+    - black
+    - flake8
+    - isort
+
+  local_bin:
+    # These are tools in ~/.local/bin/ installed via various methods
+    - name: maigret
+      method: pip
+    - name: sherlock
+      method: pip
+    - name: socialscan
+      method: pip
+    - name: holehe
+      method: pip
+    - name: zed
+      method: curl
+      url: https://zed.dev/install.sh
+
+shell:
+  dotfile_snippets:
+    - target: ~/.bashrc
+      name: api-keys
+      content: |
+        # Load API keys
+        [ -f ~/.api_keys ] && source ~/.api_keys
+
+    - target: ~/.bashrc
+      name: bash-environment
+      content: |
+        # Load environment config
+        [ -f ~/.bash_environment ] && source ~/.bash_environment
+
+  env_vars:
+    - name: GOPATH
+      value: "$HOME/go"
+    - name: PATH
+      value: "$PATH:$HOME/go/bin:$HOME/.local/bin:$HOME/.cargo/bin"
+
+  source_files:
+    - ~/.api_keys
+    - ~/.bash_aliases
+    - ~/.bash_environment
+
+claude:
+  commands_repo: https://github.com/danielrosehill/Claude-Slash-Commands-Home.git
+  # Clone this repo's contents into ~/.claude/commands/
+
+  mcp_profiles:
+    - name: work
+      servers:
+        - fal-ai
+        - google-workspace
+        - gemini-transcription
+        - google-contacts
+
+    - name: personal
+      servers:
+        - fal-ai
+        - google-workspace
+        - gemini-transcription
+        - google-contacts
+        - github
+        - context7
+        - time
+        - cloud-asr
+        - github-gist
+        - resend
+        - hunter
+        - replicate
+        - wasabi
+        - vercel
+
+    - name: sefaria
+      servers:
+        - sefaria
+        - hebcal
+
+    - name: homeassistant
+      servers:
+        - homeassistant
+
+  settings:
+    permissions:
+      allow:
+        - Bash
+        - Read
+        - Write
+        - Edit
+        - Glob
+        - Grep
+        - WebFetch
+        - WebSearch
+
+desktop_apps:
+  # Most desktop apps are covered in system_packages snap/flatpak sections above.
+  # This section is for apps with special install methods.
+  - name: docker-desktop
+    method: deb
+    notes: "Download from docker.com"
+
+  - name: termius
+    method: flatpak
+    app_id: com.termius.Termius
+
+services:
+  system:
+    - name: docker
+      state: enabled
+
+  user:
+    - name: 1password
+      state: enabled
+    - name: mullvad-vpn
+      state: enabled
+      manual_steps:
+        - "Run: mullvad account set <your-account-number>"
+        - "Run: mullvad connect"
+    - name: tailscale
+      state: enabled
+      manual_steps:
+        - "Run: tailscale up"
